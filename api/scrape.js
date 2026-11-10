@@ -162,7 +162,7 @@ body { background-color: #0f172a; color: #ffffff; padding-bottom: 90px; }
 <div class="card" style="padding:30px 16px;">
 <h2 style="font-size:18px; margin-bottom:6px;">🎁 ယနေ့ လက်ဆောင်ဂဏန်း</h2>
 <div style="background:#0f172a; padding:20px; border-radius:16px; margin-top:16px;">
-<div id="display-gift-num" style="font-size:40px; font-weight:bold; color:#fbbf24; font-family:monospace;">--</div>
+<div id="display-gift-num" style="font-size:40px; font-weight:bold; color:#fbbf24; font-family:monospace;">88</div>
 <p id="display-gift-note" style="font-size:12px; color:#94a3b8; margin-top:8px;">Admin ထည့်သွင်းထားသော ဂဏန်း</p>
 </div>
 </div>
@@ -222,7 +222,7 @@ body { background-color: #0f172a; color: #ffffff; padding-bottom: 90px; }
 <button class="nav-item" onclick="changeTab('calendar', this)">Calendar</button>
 </div>
 ​<script>
-function changeTab(tabName, element) {
+window.changeTab = function(tabName, element) {
 var pages = document.querySelectorAll('.page');
 for (var i = 0; i < pages.length; i++) {
 pages[i].classList.remove('active');
@@ -238,11 +238,14 @@ selectedPage.classList.add('active');
 if (element) {
 element.classList.add('active');
 }
+};
+​window.toggleAdmin = function(show) {
+var modal = document.getElementById('admin-modal');
+if (modal) {
+modal.style.display = show ? 'flex' : 'none';
 }
-​function toggleAdmin(show) {
-document.getElementById('admin-modal').style.display = show ? 'flex' : 'none';
-}
-​function saveAdminData() {
+};
+​window.saveAdminData = function() {
 var val3d = document.getElementById('input-3d').value.trim();
 var valGift = document.getElementById('input-gift').value.trim();
 var valNote = document.getElementById('input-note').value.trim();
@@ -260,7 +263,7 @@ localStorage.setItem('my_gift_note', valNote);
 }
 toggleAdmin(false);
 alert('အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ!');
-}
+};
 ​function loadSavedData() {
 var saved3d = localStorage.getItem('my_3d');
 var savedGift = localStorage.getItem('my_gift_num');
@@ -273,16 +276,20 @@ if (savedNote) document.getElementById('display-gift-note').innerText = savedNot
 setInterval(function() {
 var now = new Date();
 var sec = now.getSeconds();
-​// Dynamic live values simulation
-var dynamicSet = (1496.74 + (sec % 10) * 0.05).toFixed(2);
+​var dynamicSet = (1496.74 + (sec % 10) * 0.05).toFixed(2);
 var dynamicVal = (53258.99 + sec * 12.5).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 var dynamic2D = String((now.getMinutes() + sec) % 100).padStart(2, '0');
-​document.getElementById('live-twod').innerText = dynamic2D;
-document.getElementById('evening-twod').innerText = dynamic2D;
-document.getElementById('evening-set').innerText = dynamicSet;
-document.getElementById('evening-value').innerText = dynamicVal;
-document.getElementById('update-time').innerText = now.toLocaleTimeString();
-}, 2000);
+​var elLive = document.getElementById('live-twod');
+var elEve2d = document.getElementById('evening-twod');
+var elEveSet = document.getElementById('evening-set');
+var elEveVal = document.getElementById('evening-value');
+var elTime = document.getElementById('update-time');
+​if (elLive) elLive.innerText = dynamic2D;
+if (elEve2d) elEve2d.innerText = dynamic2D;
+if (elEveSet) elEveSet.innerText = dynamicSet;
+if (elEveVal) elEveVal.innerText = dynamicVal;
+if (elTime) elTime.innerText = now.toLocaleTimeString();
+}, 1000);
 }
 ​window.onload = function() {
 loadSavedData();
