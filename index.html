@@ -4,241 +4,282 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Myanmar 2D & 3D Live</title>
+<!-- Tailwind CSS for robust layout and design -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-body { background: linear-gradient(to bottom, #0f172a, #020617); color: #fff; min-height: 100vh; padding-bottom: 90px; }
-.header { display: flex; justify-content: space-between; items-center: center; padding: 16px; max-width: 450px; margin: 0 auto; }
-.header h1 { font-size: 18px; font-weight: bold; }
-.live-tag { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.4); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-.gear-btn { background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer; }
-​.container { max-width: 450px; margin: 0 auto; padding: 0 16px; }
-.big-num { text-align: center; padding: 10px 0; }
-.big-num-val { font-size: 64px; font-weight: 900; letter-spacing: 2px; color: #ffffff; text-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-.update-text { font-size: 11px; color: #94a3b8; margin-top: 4px; }
-​.card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(51, 65, 85, 0.8); border-radius: 16px; padding: 14px; margin-bottom: 12px; }
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.session-title { font-size: 13px; font-weight: 600; color: #cbd5e1; }
-.badge { background: #f59e0b; color: #0f172a; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 4px; }
-.badge-live { background: #ef4444; color: #ffffff; }
-​.flex-row { display: flex; justify-content: space-between; align-items: flex-end; }
-.sub-label { font-size: 9px; color: #64748b; margin-bottom: 2px; }
-.sub-val { font-size: 15px; font-weight: bold; color: #ffffff; }
-.twod-val { font-size: 26px; font-weight: 900; color: #f59e0b; }
-​.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.grid-box { text-align: center; display: flex; justify-content: space-around; align-items: center; padding-top: 6px; }
-.divider { width: 1px; height: 24px; background: rgba(51, 65, 85, 0.8); }
-​/* Navigation Bar */
-.navbar { position: fixed; bottom: 12px; left: 16px; right: 16px; max-width: 450px; margin: 0 auto; background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(51, 65, 85, 0.8); backdrop-filter: blur(10px); border-radius: 20px; padding: 6px; display: flex; justify-content: space-around; z-index: 100; }
-.nav-item { border: none; background: transparent; color: #64748b; padding: 8px 12px; border-radius: 14px; display: flex; flex-direction: column; align-items: center; font-size: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-.nav-item span { margin-top: 2px; }
-.nav-item.active { background: #f59e0b; color: #0f172a; }
-​/* Modal */
-.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 200; padding: 16px; }
-.modal-content { background: #0f172a; border: 1px solid #334155; border-radius: 16px; padding: 20px; width: 100%; max-width: 320px; }
-.input-group { margin-bottom: 12px; }
-.input-group label { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 4px; }
-.input-group input { width: 100%; background: #1e293b; border: 1px solid #334155; color: #fff; padding: 8px 12px; border-radius: 8px; outline: none; }
-.btn-submit { width: 100%; background: #f59e0b; color: #0f172a; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-​.page { display: none; }
-.page.active { display: block; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 </style>
 </head>
-<body>
-​<div class="header">
-<h1>Myanmar 2D</h1>
-<div style="display: flex; gap: 8px; align-items: center;">
-<span class="live-tag">● LIVE</span>
-<button class="gear-btn" onclick="openAdmin()">⚙️</button>
+<body class="bg-slate-950 text-white min-h-screen pb-24 select-none">
+​<!-- Top Header -->
+<div class="flex justify-between items-center px-5 py-4 max-w-md mx-auto border-b border-slate-800/80">
+<h1 class="text-xl font-black tracking-wide text-white">Myanmar 2D</h1>
+<div class="flex items-center gap-3">
+<span class="bg-red-500/20 text-red-500 border border-red-500/40 text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> LIVE
+</span>
+<button onclick="openAdmin()" class="text-slate-400 hover:text-amber-400 text-lg transition">
+<i class="fa-solid fa-gear"></i>
+</button>
 </div>
 </div>
-​<div class="container">
-​<!-- LIVE PAGE -->
-<div id="page-live" class="page active">
-<div class="big-num">
-<div id="live-twod" class="big-num-val">48</div>
-<div class="update-text">🔴 Updated: <span id="update-time">--:--:-- PM</span></div>
+​<!-- Container Area -->
+<div class="max-w-md mx-auto px-4 mt-2">
+​<!-- ================= LIVE PAGE ================= -->
+<div id="page-live" class="tab-page space-y-4">
+​<!-- Big Live Number Display -->
+<div class="text-center py-4">
+<div id="live-twod" class="text-7xl font-black text-white tracking-widest drop-shadow-md">48</div>
+<div class="text-xs text-slate-400 mt-2 flex items-center justify-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-red-500"></span> Updated: <span id="update-time" class="text-slate-200 font-mono">--:--:-- PM</span>
 </div>
-​<!-- Morning Card -->
-<div class="card">
-<div class="card-header">
-<span class="session-title">☀️ 12:01 PM</span>
-<span class="badge">MORNING</span>
 </div>
-<div class="flex-row">
+​<!-- Morning Card (12:01 PM) -->
+<div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-lg">
+<div class="flex justify-between items-center mb-3">
+<span class="text-sm font-bold text-slate-200 flex items-center gap-2">
+<i class="fa-solid fa-sun text-amber-400"></i> 12:01 PM
+</span>
+<span class="bg-amber-400 text-slate-950 text-[10px] font-extrabold px-2.5 py-0.5 rounded-md">MORNING</span>
+</div>
+<div class="flex justify-between items-end">
 <div>
-<div class="sub-label">SET</div>
-<div id="morning-set" class="sub-val">1,494.41</div>
-</div>
-<div>
-<div class="sub-label">VALUE</div>
-<div id="morning-value" class="sub-val">40,497.76</div>
-</div>
-<div style="text-align: right;">
-<div class="sub-label">2D</div>
-<div id="morning-twod" class="twod-val">17</div>
-</div>
-</div>
-</div>
-​<!-- Evening Card -->
-<div class="card" style="border-color: rgba(245, 158, 11, 0.4);">
-<div class="card-header">
-<span class="session-title">🌙 4:30 PM</span>
-<span class="badge badge-live">EVENING LIVE</span>
-</div>
-<div class="flex-row">
-<div>
-<div class="sub-label">SET</div>
-<div id="evening-set" class="sub-val">1,496.74</div>
+<div class="text-[10px] text-slate-400 font-semibold tracking-wider">SET</div>
+<div id="morning-set" class="text-base font-bold text-white">1,494.41</div>
 </div>
 <div>
-<div class="sub-label">VALUE</div>
-<div id="evening-value" class="sub-val">53,258.99</div>
+<div class="text-[10px] text-slate-400 font-semibold tracking-wider">VALUE</div>
+<div id="morning-value" class="text-base font-bold text-white">40,497.76</div>
 </div>
-<div style="text-align: right;">
-<div class="sub-label">2D</div>
-<div id="evening-twod" class="twod-val">48</div>
-</div>
-</div>
-</div>
-​<!-- 9:30 & 2:00 Grid -->
-<div class="grid-2">
-<div class="card">
-<div class="session-title" style="margin-bottom:6px;">9:30 AM</div>
-<div class="grid-box">
-<div><div class="sub-label">MODERN</div><div class="sub-val">84</div></div>
-<div class="divider"></div>
-<div><div class="sub-label">INTERNET</div><div class="sub-val">51</div></div>
-</div>
-</div>
-<div class="card">
-<div class="session-title" style="margin-bottom:6px;">2:00 PM</div>
-<div class="grid-box">
-<div><div class="sub-label">MODERN</div><div class="sub-val">02</div></div>
-<div class="divider"></div>
-<div><div class="sub-label">INTERNET</div><div class="sub-val">28</div></div>
+<div class="text-right">
+<div class="text-[10px] text-slate-400 font-semibold tracking-wider">2D</div>
+<div id="morning-twod" class="text-3xl font-black text-amber-400">17</div>
 </div>
 </div>
 </div>
+​<!-- Evening Card (4:30 PM) -->
+<div class="bg-slate-900/90 border border-amber-500/40 rounded-2xl p-4 shadow-lg">
+<div class="flex justify-between items-center mb-3">
+<span class="text-sm font-bold text-slate-200 flex items-center gap-2">
+<i class="fa-solid fa-moon text-amber-300"></i> 4:30 PM
+</span>
+<span class="bg-red-500 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-md animate-pulse">EVENING LIVE</span>
 </div>
-​<!-- 2D HISTORY PAGE -->
-<div id="page-2d" class="page">
-<h3 style="color:#f59e0b; margin-bottom:12px;">📊 2D မှတ်တမ်းများ</h3>
-<div class="card" style="display:flex; justify-between; align-items:center;">
-<span style="font-size:12px; color:#cbd5e1;">10-11-2026</span>
+<div class="flex justify-between items-end">
 <div>
-<span style="color:#f59e0b; font-size:12px; font-weight:bold;">12:01 PM: <b style="color:#fff">17</b></span>
-<span style="color:#f59e0b; font-size:12px; font-weight:bold; margin-left:8px;">4:30 PM: <b style="color:#fff">48</b></span>
+<div class="text-[10px] text-slate-400 font-semibold tracking-wider">SET</div>
+<div id="evening-set" class="text-base font-bold text-white">1,496.74</div>
+</div>
+<div>
+<div class="text-[10px] text-slate-400 font-semibold tracking-wider">VALUE</div>
+<div id="evening-value" class="text-base font-bold text-white">53,258.99</div>
+</div>
+<div class="text-right">
+<div class="text-[10px] text-slate-400 font-semibold tracking-wider">2D</div>
+<div id="evening-twod" class="text-3xl font-black text-amber-400">48</div>
 </div>
 </div>
 </div>
-​<!-- 3D PAGE -->
-<div id="page-3d" class="page">
-<div class="card" style="text-align:center; padding:24px 12px;">
-<span class="badge" style="background:rgba(245,158,11,0.2); color:#f59e0b;">THAI 3D RESULT</span>
-<div style="font-size:12px; color:#94a3b8; margin-top:12px;">ယခုလ ထွက်ဂဏန်း</div>
-<div id="threed-result" style="font-size:48px; font-weight:900; color:#f59e0b; margin-top:6px;">932</div>
+​<!-- 9:30 AM & 2:00 PM Grid -->
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5 shadow-lg">
+<div class="text-xs font-bold text-slate-300 mb-2">9:30 AM</div>
+<div class="flex justify-around items-center text-center">
+<div>
+<div class="text-[9px] text-slate-400">MODERN</div>
+<div class="text-lg font-bold text-white">84</div>
 </div>
-</div>
-​<!-- GIFT PAGE -->
-<div id="page-gift" class="page">
-<div class="card" style="text-align:center; padding:24px 12px; background:linear-gradient(to bottom right, rgba(245,158,11,0.1), rgba(15,23,42,0.8));">
-<span class="badge">🎁 SPECIAL GIFT NUMBER</span>
-<div style="font-size:12px; color:#cbd5e1; margin-top:12px;">ဒီနေ့အတွက် အထူးလက်ဆောင်ဂဏန်း</div>
-<div id="gift-number" style="font-size:54px; font-weight:900; color:#f59e0b; margin:10px 0;">88</div>
-<p id="gift-note" style="font-size:11px; color:#94a3b8; background:rgba(0,0,0,0.4); padding:10px; border-radius:8px;">* Admin မှ နေ့စဉ် ပေါက်ဂဏန်း တင်ပေးသွားပါမည်။</p>
-</div>
-</div>
-​<!-- ANALYTICS PAGE -->
-<div id="page-analytics" class="page">
-<div class="card" style="text-align:center;">
-<h3 style="color:#f59e0b; font-size:13px; margin-bottom:12px;">📈 သုံးသပ်ချက်များ</h3>
-<div class="grid-2">
-<div style="background:#020617; padding:10px; border-radius:8px;"><div class="sub-label">ထိပ်စီး</div><div style="color:#10b981; font-weight:bold;">4, 8</div></div>
-<div style="background:#020617; padding:10px; border-radius:8px;"><div class="sub-label">နောက်ပိတ်</div><div style="color:#10b981; font-weight:bold;">2, 7</div></div>
+<div class="w-[1px] h-6 bg-slate-800"></div>
+<div>
+<div class="text-[9px] text-slate-400">INTERNET</div>
+<div class="text-lg font-bold text-white">51</div>
 </div>
 </div>
 </div>
-​<!-- CALENDAR PAGE -->
-<div id="page-calendar" class="page">
-<div class="card" style="text-align:center; padding:20px;">
-<h3 style="color:#cbd5e1; font-size:13px;">📅 2D/3D ပြက္ခဒိန်</h3>
-<p style="font-size:11px; color:#64748b; margin-top:6px;">လအလိုက် ထွက်ဂဏန်းများ ပြက္ခဒိန်</p>
+<div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5 shadow-lg">
+<div class="text-xs font-bold text-slate-300 mb-2">2:00 PM</div>
+<div class="flex justify-around items-center text-center">
+<div>
+<div class="text-[9px] text-slate-400">MODERN</div>
+<div class="text-lg font-bold text-white">02</div>
+</div>
+<div class="w-[1px] h-6 bg-slate-800"></div>
+<div>
+<div class="text-[9px] text-slate-400">INTERNET</div>
+<div class="text-lg font-bold text-white">28</div>
+</div>
+</div>
+</div>
+</div>
+​</div>
+​<!-- ================= 2D PAGE ================= -->
+<div id="page-2d" class="tab-page hidden space-y-3">
+<h3 class="text-amber-400 font-bold text-base mb-2 flex items-center gap-2">
+<i class="fa-solid fa-chart-line"></i> 2D မှတ်တမ်းများ
+</h3>
+<div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex justify-between items-center">
+<span class="text-xs text-slate-300 font-semibold">10-11-2026</span>
+<div class="space-x-3 text-xs">
+<span class="text-slate-400">12:01 PM: <b class="text-amber-400">17</b></span>
+<span class="text-slate-400">4:30 PM: <b class="text-amber-400">48</b></span>
+</div>
+</div>
+</div>
+​<!-- ================= 3D PAGE ================= -->
+<div id="page-3d" class="tab-page hidden">
+<div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-3 shadow-lg">
+<span class="bg-amber-400/10 text-amber-400 border border-amber-400/20 text-xs font-bold px-3 py-1 rounded-full">THAI 3D RESULT</span>
+<div class="text-xs text-slate-400 pt-2">ယခုလ ထွက်ဂဏန်း</div>
+<div id="threed-result" class="text-6xl font-black text-amber-400">932</div>
+</div>
+</div>
+​<!-- ================= GIFT PAGE ================= -->
+<div id="page-gift" class="tab-page hidden">
+<div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-amber-500/30 rounded-2xl p-6 text-center space-y-3 shadow-xl">
+<span class="bg-amber-400 text-slate-950 text-xs font-black px-3 py-1 rounded-md tracking-wider">🎁 SPECIAL GIFT NUMBER</span>
+<div class="text-xs text-slate-300 pt-2">ဒီနေ့အတွက် အထူးလက်ဆောင်ဂဏန်း</div>
+<div id="gift-number" class="text-6xl font-black text-amber-400 my-2">88</div>
+<p id="gift-note" class="text-xs text-slate-400 bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+* Admin မှ နေ့စဉ် ပေါက်ဂဏန်း တင်ပေးသွားပါမည်။
+</p>
+</div>
+</div>
+​<!-- ================= ANALYTICS PAGE ================= -->
+<div id="page-analytics" class="tab-page hidden">
+<div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3 text-center">
+<h3 class="text-amber-400 font-bold text-sm">📈 သုံးသပ်ချက်များ</h3>
+<div class="grid grid-cols-2 gap-3 pt-2">
+<div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+<div class="text-[10px] text-slate-400">ထိပ်စီး</div>
+<div class="text-lg font-bold text-emerald-400 mt-1">4, 8</div>
+</div>
+<div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+<div class="text-[10px] text-slate-400">နောက်ပိတ်</div>
+<div class="text-lg font-bold text-emerald-400 mt-1">2, 7</div>
+</div>
+</div>
+</div>
+</div>
+​<!-- ================= CALENDAR PAGE ================= -->
+<div id="page-calendar" class="tab-page hidden">
+<div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center">
+<h3 class="text-slate-200 font-bold text-sm">📅 2D/3D ပြက္ခဒိန်</h3>
+<p class="text-xs text-slate-500 mt-2">လအလိုက် ထွက်ဂဏန်းများ ပြက္ခဒိန်</p>
 </div>
 </div>
 ​</div>
 ​<!-- Admin Modal -->
-<div id="admin-modal" class="modal">
-<div class="modal-content">
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-<h3 style="color:#f59e0b; font-size:14px;">🔑 Admin Panel</h3>
-<button onclick="closeAdmin()" style="background:none; border:none; color:#fff; cursor:pointer;">✕</button>
+<div id="admin-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden justify-center items-center z-50 p-4">
+<div class="bg-slate-900 border border-slate-700 rounded-2xl p-5 w-full max-w-xs space-y-4">
+<div class="flex justify-between items-center border-b border-slate-800 pb-2">
+<h3 class="text-amber-400 font-bold text-sm">🔑 Admin Panel</h3>
+<button onclick="closeAdmin()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
 </div>
-<div class="input-group">
-<label>လက်ဆောင်ဂဏန်း (Gift Number)</label>
-<input type="text" id="input-gift-num" placeholder="ဥပမာ - 88">
+<div class="space-y-1">
+<label class="text-xs text-slate-400">လက်ဆောင်ဂဏန်း (Gift Number)</label>
+<input type="text" id="input-gift-num" placeholder="ဥပမာ - 88" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-400">
 </div>
-<div class="input-group">
-<label>အကြောင်းအရာ စာသား (Note)</label>
-<input type="text" id="input-gift-note" placeholder="ဥပမာ - ဒီနေ့ မနက်ပိုင်း အပိုင်">
+<div class="space-y-1">
+<label class="text-xs text-slate-400">အကြောင်းအရာ စာသား (Note)</label>
+<input type="text" id="input-gift-note" placeholder="ဥပမာ - ဒီနေ့ အပိုင်ဂဏန်း" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-400">
 </div>
-<button class="btn-submit" onclick="saveAdminData()">သိမ်းဆည်းမည်</button>
+<button onclick="saveAdminData()" class="w-full bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-sm hover:bg-amber-300 transition">
+သိမ်းဆည်းမည်
+</button>
 </div>
 </div>
-​<!-- Bottom Navigation -->
-<div class="navbar">
-<button class="nav-item active" onclick="switchTab('live', this)">🏠 <span>Live</span></button>
-<button class="nav-item" onclick="switchTab('2d', this)">📈 <span>2D</span></button>
-<button class="nav-item" onclick="switchTab('3d', this)">🎲 <span>3D</span></button>
-<button class="nav-item" onclick="switchTab('gift', this)">🎁 <span>Gift</span></button>
-<button class="nav-item" onclick="switchTab('analytics', this)">📊 <span>Analytics</span></button>
-<button class="nav-item" onclick="switchTab('calendar', this)">📅 <span>Calendar</span></button>
+​<!-- Bottom Navigation Bar -->
+<div class="fixed bottom-3 left-4 right-4 max-w-md mx-auto bg-slate-900/95 border border-slate-800 backdrop-blur-md rounded-2xl p-1.5 flex justify-around items-center z-40 shadow-2xl">
+<button onclick="switchTab('live', this)" class="nav-btn active flex flex-col items-center py-1.5 px-3 rounded-xl text-amber-400 bg-amber-400/10 text-xs font-semibold transition">
+<i class="fa-solid fa-house text-base"></i>
+<span class="text-[10px] mt-0.5">Live</span>
+</button>
+<button onclick="switchTab('2d', this)" class="nav-btn flex flex-col items-center py-1.5 px-3 rounded-xl text-slate-400 hover:text-white text-xs font-semibold transition">
+<i class="fa-solid fa-chart-line text-base"></i>
+<span class="text-[10px] mt-0.5">2D</span>
+</button>
+<button onclick="switchTab('3d', this)" class="nav-btn flex flex-col items-center py-1.5 px-3 rounded-xl text-slate-400 hover:text-white text-xs font-semibold transition">
+<i class="fa-solid fa-cubes text-base"></i>
+<span class="text-[10px] mt-0.5">3D</span>
+</button>
+<button onclick="switchTab('gift', this)" class="nav-btn flex flex-col items-center py-1.5 px-3 rounded-xl text-slate-400 hover:text-white text-xs font-semibold transition">
+<i class="fa-solid fa-gift text-base"></i>
+<span class="text-[10px] mt-0.5">Gift</span>
+</button>
+<button onclick="switchTab('analytics', this)" class="nav-btn flex flex-col items-center py-1.5 px-3 rounded-xl text-slate-400 hover:text-white text-xs font-semibold transition">
+<i class="fa-solid fa-chart-simple text-base"></i>
+<span class="text-[10px] mt-0.5">Analytics</span>
+</button>
+<button onclick="switchTab('calendar', this)" class="nav-btn flex flex-col items-center py-1.5 px-3 rounded-xl text-slate-400 hover:text-white text-xs font-semibold transition">
+<i class="fa-regular fa-calendar text-base"></i>
+<span class="text-[10px] mt-0.5">Calendar</span>
+</button>
 </div>
-​<script>
+​<!-- App Logic Script -->
+<script>
 function switchTab(pageId, btn) {
-var pages = document.querySelectorAll('.page');
-pages.forEach(function(p) { p.classList.remove('active'); });
-​var navItems = document.querySelectorAll('.nav-item');
-navItems.forEach(function(n) { n.classList.remove('active'); });
-​document.getElementById('page-' + pageId).classList.add('active');
-btn.classList.add('active');
+// Hide all tab pages
+const pages = document.querySelectorAll('.tab-page');
+pages.forEach(page => page.classList.add('hidden'));
+​// Remove active style from all navigation buttons
+const navBtns = document.querySelectorAll('.nav-btn');
+navBtns.forEach(nav => {
+nav.classList.remove('text-amber-400', 'bg-amber-400/10');
+nav.classList.add('text-slate-400');
+});
+​// Show selected page
+const targetPage = document.getElementById('page-' + pageId);
+if (targetPage) {
+targetPage.classList.remove('hidden');
 }
-​function openAdmin() { document.getElementById('admin-modal').style.display = 'flex'; }
-function closeAdmin() { document.getElementById('admin-modal').style.display = 'none'; }
+​// Highlight active button
+btn.classList.remove('text-slate-400');
+btn.classList.add('text-amber-400', 'bg-amber-400/10');
+}
+​function openAdmin() {
+document.getElementById('admin-modal').classList.remove('hidden');
+document.getElementById('admin-modal').classList.add('flex');
+}
+​function closeAdmin() {
+document.getElementById('admin-modal').classList.add('hidden');
+document.getElementById('admin-modal').classList.remove('flex');
+}
 ​function saveAdminData() {
-var num = document.getElementById('input-gift-num').value;
-var note = document.getElementById('input-gift-note').value;
-if(num) {
+const num = document.getElementById('input-gift-num').value.trim();
+const note = document.getElementById('input-gift-note').value.trim();
+​if (num) {
 document.getElementById('gift-number').innerText = num;
-localStorage.setItem('my_gift_num', num);
+localStorage.setItem('my_app_gift_num', num);
 }
-if(note) {
+if (note) {
 document.getElementById('gift-note').innerText = note;
-localStorage.setItem('my_gift_note', note);
+localStorage.setItem('my_app_gift_note', note);
 }
 closeAdmin();
 }
 ​function loadAdminData() {
-var n = localStorage.getItem('my_gift_num');
-var note = localStorage.getItem('my_gift_note');
-if(n) document.getElementById('gift-number').innerText = n;
-if(note) document.getElementById('gift-note').innerText = note;
+const n = localStorage.getItem('my_app_gift_num');
+const note = localStorage.getItem('my_app_gift_note');
+if (n) document.getElementById('gift-number').innerText = n;
+if (note) document.getElementById('gift-note').innerText = note;
 }
 ​function liveUpdate() {
-var d = new Date();
-var sec = d.getSeconds();
-var min = d.getMinutes();
-var live2D = String((min + sec) % 100).padStart(2, '0');
+const now = new Date();
+const sec = now.getSeconds();
+const min = now.getMinutes();
+const live2D = String((min + sec) % 100).padStart(2, '0');
 ​document.getElementById('live-twod').innerText = live2D;
 document.getElementById('evening-twod').innerText = live2D;
-document.getElementById('evening-set').innerText = (1496.74 + (sec % 5) * 0.11).toFixed(2);
-document.getElementById('evening-value').innerText = (53258.99 + sec * 15.2).toLocaleString('en-US', {minimumFractionDigits: 2});
-document.getElementById('update-time').innerText = d.toLocaleTimeString();
+document.getElementById('evening-set').innerText = (1496.74 + (sec % 5) * 0.12).toFixed(2);
+document.getElementById('evening-value').innerText = (53258.99 + sec * 18.5).toLocaleString('en-US', { minimumFractionDigits: 2 });
+document.getElementById('update-time').innerText = now.toLocaleTimeString();
 }
-​window.onload = function() {
+​window.addEventListener('DOMContentLoaded', () => {
 loadAdminData();
 liveUpdate();
 setInterval(liveUpdate, 2000);
-};
+});
 </script>
 </body>
 </html>
