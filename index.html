@@ -328,29 +328,32 @@
             if (note) document.getElementById('gift-note').innerText = note;
         }
 
-        function updateLiveValues() {
-            const now = new Date();
-            const sec = now.getSeconds();
-            const min = now.getMinutes();
-
-            // Calculate dynamic numbers
-            const dynamic2D = String((min * 3 + sec) % 100).padStart(2, '0');
-            const dynamicSet = (1496.74 + (sec % 7) * 0.12).toFixed(2);
-            const dynamicValue = (53258.99 + sec * 18.5).toLocaleString('en-US', { minimumFractionDigits: 2 });
-
-            // Update DOM Elements
-            document.getElementById('live-twod').innerText = dynamic2D;
-            document.getElementById('evening-twod').innerText = dynamic2D;
-            document.getElementById('evening-set').innerText = dynamicSet;
-            document.getElementById('evening-value').innerText = dynamicValue;
-            document.getElementById('update-time').innerText = now.toLocaleTimeString();
+        async function fetchRealtimeData() {
+            try {
+                const res = await fetch('/api/scrape');
+                const result = await res.json();
+                if (result.success && result.data) {
+                    const d = result.data;
+                    document.getElementById('live-twod').innerText = d.liveTwod || d.evening.twod;
+                    document.getElementById('evening-twod').innerText = d.evening.twod;
+                    document.getElementById('evening-set').innerText = d.evening.set;
+                    document.getElementById('evening-value').innerText = d.evening.value;
+                    document.getElementById('update-time').innerText = d.updatedAt;
+                    if(d.threed) {
+                        const threedElem = document.getElementById('threed-number');
+                        if (threedElem) threedElem.innerText = d.threed;
+                    }
+                }
+            } catch (err) {
+                console.error("Realtime fetch error:", err);
+            }
         }
 
         // Run application setup
         window.addEventListener('load', () => {
             loadAdminData();
-            updateLiveValues();
-            setInterval(updateLiveValues, 1000);
+            fetchRealtimeData();
+            setInterval(fetchRealtimeData, 2000); // Poll API every 2 seconds for real-time updates
         });
     </script>
 </body>
